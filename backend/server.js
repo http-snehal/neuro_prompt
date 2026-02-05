@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
+import authRoutes from './routes/auth.js';
 
 // Load environment variables
 dotenv.config();
@@ -26,10 +27,10 @@ app.get('/', (req, res) => {
     });
 });
 
-// API Routes (will be implemented in Week 1, Days 3-4)
-// app.use('/api/auth', authRoutes);
-// app.use('/api/enhance', enhanceRoutes);
-// app.use('/api/user', userRoutes);
+// API Routes
+app.use('/api/auth', authRoutes);
+// app.use('/api/enhance', enhanceRoutes); // Week 2
+// app.use('/api/user', userRoutes); // Week 3
 
 // Error handling middleware
 app.use((err, req, res, next) => {
