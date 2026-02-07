@@ -54,6 +54,9 @@ function initializeElements() {
 
 // Attach event listeners
 function attachEventListeners() {
+    // Yeti animations
+    initializeYetiAnimations();
+
     elements.loginForm.addEventListener('submit', handleLogin);
     elements.signupForm.addEventListener('submit', handleSignup);
     elements.showSignup.addEventListener('click', (e) => {
@@ -65,6 +68,32 @@ function attachEventListeners() {
         showView('login');
     });
     elements.logoutBtn.addEventListener('click', handleLogout);
+}
+
+// Yeti animation functions
+function initializeYetiAnimations() {
+    const eyes = document.querySelector('.eyes');
+    const yetiWrapper = document.querySelector('.yeti-wrapper');
+
+    if (!eyes || !yetiWrapper) return;
+
+    // Eye tracking on email input
+    elements.loginEmail.addEventListener('input', (e) => {
+        const val = e.target.value.length;
+        // Move eyes slightly left/right based on text length
+        const move = Math.min(val * 0.8, 15);
+        eyes.style.transform = `translateX(${move - 7}px)`;
+    });
+
+    // Cover eyes on password focus (peek-a-boo)
+    elements.loginPassword.addEventListener('focus', () => {
+        yetiWrapper.classList.add('peek-a-boo');
+    });
+
+    // Reveal eyes on password blur
+    elements.loginPassword.addEventListener('blur', () => {
+        yetiWrapper.classList.remove('peek-a-boo');
+    });
 }
 
 // View Management
