@@ -1,16 +1,61 @@
-# React + Vite
+# Neuroprompt Extension - Vanilla JavaScript
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser extension for optimizing AI prompts using vanilla HTML, CSS, and JavaScript (no frameworks, no build step required).
 
-Currently, two official plugins are available:
+## Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+extension/
+├── manifest.json           # Extension configuration
+├── popup/
+│   ├── popup.html         # Popup interface
+│   ├── popup.css          # Styles
+│   └── popup.js           # Logic
+├── content/
+│   ├── chatgpt.js         # ChatGPT content script
+│   └── gemini.js          # Gemini content script
+├── background/
+│   └── service-worker.js  # Background worker
+└── icons/
+    ├── icon16.png
+    ├── icon48.png
+    └── icon128.png
+```
 
-## React Compiler
+## Installation (Development)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Open your browser (Chrome/Edge)
+2. Navigate to `chrome://extensions/` or `edge://extensions/`
+3. Enable "Developer mode" (toggle in top-right)
+4. Click "Load unpacked"
+5. Select the `extension` folder
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- ✅ User authentication (login/signup)
+- ✅ Prompt enhancement on ChatGPT & Gemini
+- ✅ Usage tracking (50 enhancements/day)
+- ✅ Dashboard with statistics
+- ✅ Pure HTML/CSS/JS (no build required)
+
+## Configuration
+
+Update the API URL in `background/service-worker.js` and `popup/popup.js`:
+
+```javascript
+const API_BASE_URL = 'https://your-backend-url.vercel.app/api';
+```
+
+## Deployment
+
+### Chrome Web Store
+1. Zip the entire `extension` folder
+2. Visit [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)
+3. Click "New Item"
+4. Upload the zip file
+5. Fill in listing details
+6. Submit for review
+
+## Backend
+
+The extension requires a backend API. See `../backend/` for deployment instructions.

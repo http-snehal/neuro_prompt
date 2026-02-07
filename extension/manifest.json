@@ -2,19 +2,19 @@
     "manifest_version": 3,
     "name": "Neuroprompt - AI Prompt Optimizer",
     "version": "1.0.0",
-    "description": "Transform basic prompts into highly effective AI queries with one click",
-    "icons": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
-    },
+    "description": "Optimize your AI prompts for better results on ChatGPT and Gemini",
     "action": {
-        "default_popup": "index.html",
+        "default_popup": "popup/popup.html",
         "default_icon": {
             "16": "icons/icon16.png",
             "48": "icons/icon48.png",
             "128": "icons/icon128.png"
         }
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
     },
     "permissions": [
         "storage",
@@ -22,12 +22,11 @@
     ],
     "host_permissions": [
         "https://chat.openai.com/*",
-        "https://gemini.google.com/*",
-        "https://chatgpt.com/*"
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*"
     ],
     "background": {
-        "service_worker": "src/background/service-worker.js",
-        "type": "module"
+        "service_worker": "background/service-worker.js"
     },
     "content_scripts": [
         {
@@ -36,7 +35,7 @@
                 "https://chatgpt.com/*"
             ],
             "js": [
-                "src/content/chatgpt.js"
+                "content/chatgpt.js"
             ],
             "run_at": "document_idle"
         },
@@ -45,19 +44,9 @@
                 "https://gemini.google.com/*"
             ],
             "js": [
-                "src/content/gemini.js"
+                "content/gemini.js"
             ],
             "run_at": "document_idle"
-        }
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "icons/*"
-            ],
-            "matches": [
-                "<all_urls>"
-            ]
         }
     ]
 }
