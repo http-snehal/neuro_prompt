@@ -25,33 +25,39 @@ function createOptimizeButton() {
   button.textContent = CONFIG.buttonText;
   button.className = 'neuroprompt-btn';
 
-  // Inline styles to ensure visibility
+  // Modern glassmorphism style - positioned in red box area (between greeting and input)
   button.style.cssText = `
-    position: absolute;
-    bottom: 12px;
-    right: 52px;
+    position: fixed;
+    top: 235px;
+    right: 310px;
     z-index: 9999;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    letter-spacing: 0.5px;
   `;
 
-  // Hover effect
+  console.log('🔧 Neuroprompt button position:', { top: '235px', right: '310px' });
+
+  // Enhanced hover effect
   button.addEventListener('mouseenter', () => {
-    button.style.transform = 'translateY(-1px)';
-    button.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.4)';
+    if (!button.disabled) {
+      button.style.transform = 'translateY(-2px) scale(1.02)';
+      button.style.boxShadow = '0 8px 24px rgba(168, 85, 247, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2)';
+    }
   });
 
   button.addEventListener('mouseleave', () => {
-    button.style.transform = 'translateY(0)';
-    button.style.boxShadow = '0 2px 8px rgba(99, 102, 241, 0.3)';
+    button.style.transform = 'translateY(0) scale(1)';
+    button.style.boxShadow = '0 4px 16px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)';
   });
 
   // Click handler
@@ -79,6 +85,7 @@ async function handleOptimizeClick(e) {
 
   isProcessing = true;
   updateButtonState('loading');
+  addBlurEffect(true);
 
   try {
     // Send message to background script
@@ -108,6 +115,23 @@ async function handleOptimizeClick(e) {
   } finally {
     isProcessing = false;
     updateButtonState('ready');
+    addBlurEffect(false);
+  }
+}
+
+/**
+ * Add or remove blur effect from textarea
+ */
+function addBlurEffect(add) {
+  if (!currentTextarea) return;
+
+  if (add) {
+    currentTextarea.style.filter = 'blur(4px)';
+    currentTextarea.style.pointerEvents = 'none';
+    currentTextarea.style.transition = 'filter 0.3s ease';
+  } else {
+    currentTextarea.style.filter = 'blur(0px)';
+    currentTextarea.style.pointerEvents = 'auto';
   }
 }
 
@@ -119,15 +143,17 @@ function updateButtonState(state) {
 
   switch (state) {
     case 'loading':
-      optimizeButton.textContent = '⏳ Optimizing...';
+      optimizeButton.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 6px;">⏳ <span style="animation: pulse 1.5s ease-in-out infinite;">Optimizing...</span></span>';
       optimizeButton.disabled = true;
-      optimizeButton.style.opacity = '0.7';
+      optimizeButton.style.opacity = '0.8';
+      optimizeButton.style.cursor = 'not-allowed';
       break;
     case 'ready':
     default:
       optimizeButton.textContent = CONFIG.buttonText;
       optimizeButton.disabled = false;
       optimizeButton.style.opacity = '1';
+      optimizeButton.style.cursor = 'pointer';
       break;
   }
 }
@@ -221,28 +247,37 @@ function init() {
 // Add animation styles
 const style = document.createElement('style');
 style.textContent = `
-            @keyframes slideIn {
+  @keyframes slideIn {
     from {
-                    transform: translateX(100 %);
-                    opacity: 0;
-                }
+      transform: translateX(100%);
+      opacity: 0;
+    }
     to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
 
-            @keyframes slideOut {
+  @keyframes slideOut {
     from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
+      transform: translateX(0);
+      opacity: 1;
+    }
     to {
-                    transform: translateX(100 %);
-                    opacity: 0;
-                }
-            }
-            `;
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+`;
 document.head.appendChild(style);
 
 // Initialize when DOM is ready

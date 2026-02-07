@@ -1,8 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Initialize Gemini API
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 // System prompt for optimizing user prompts
 const SYSTEM_PROMPT = `You are an expert prompt engineer. Your task is to transform basic, vague prompts into highly effective, detailed prompts that will get the best results from an AI assistant.
 
@@ -31,8 +28,11 @@ export const enhancePrompt = async (originalPrompt) => {
     const startTime = Date.now();
 
     try {
-        // Use Gemini 1.5 Flash for fast, free responses
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        // Initialize with latest API key from environment
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+        // Use Gemini 2.5 Flash (latest model as of Feb 2025)
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
         // Construct the full prompt
         const fullPrompt = `${SYSTEM_PROMPT}
