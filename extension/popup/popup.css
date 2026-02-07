@@ -10,8 +10,8 @@ body {
     width: 380px;
     min-height: 500px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: #CBDDE9;
-    /* Cloud sky blue */
+    background: #2872A1;
+    /* Ocean Blue */
     color: #1f2937;
 }
 
@@ -236,14 +236,14 @@ input::placeholder {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: #2872A1;
     color: white;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 12px rgba(40, 114, 161, 0.3);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 6px 16px rgba(40, 114, 161, 0.4);
 }
 
 .btn-primary:active {

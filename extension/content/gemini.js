@@ -31,7 +31,7 @@ function createOptimizeButton() {
     top: -50px;
     right: 20px;
     z-index: 9999;
-    background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+    background: #2872A1;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -40,7 +40,7 @@ function createOptimizeButton() {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(40, 114, 161, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     letter-spacing: 0.5px;
   `;
