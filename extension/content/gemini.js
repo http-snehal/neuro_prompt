@@ -28,8 +28,8 @@ function createOptimizeButton() {
   // Modern glassmorphism style - positioned in red box area (between greeting and input)
   button.style.cssText = `
     position: fixed;
-    top: 235px;
-    right: 310px;
+    top: -50px;
+    right: 20px;
     z-index: 9999;
     background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
     color: white;
@@ -45,7 +45,7 @@ function createOptimizeButton() {
     letter-spacing: 0.5px;
   `;
 
-  console.log('🔧 Neuroprompt button position:', { top: '235px', right: '310px' });
+  console.log('🔧 Neuroprompt button position:', { top: '-50px', right: '20px' });
 
   // Enhanced hover effect
   button.addEventListener('mouseenter', () => {
