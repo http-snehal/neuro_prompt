@@ -51,9 +51,6 @@ const userSchema = new mongoose.Schema({
     timestamps: true // Adds createdAt and updatedAt automatically
 });
 
-// Add index on email for faster queries
-userSchema.index({ email: 1 });
-
 // Method to check if daily limit needs reset
 userSchema.methods.checkAndResetDailyLimit = function () {
     const today = new Date();

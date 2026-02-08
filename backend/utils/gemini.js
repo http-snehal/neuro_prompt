@@ -20,22 +20,46 @@ DO NOT:
 Return ONLY the enhanced prompt, without any explanations or meta-commentary.`;
 
 /**
- * Enhance a user's prompt using Gemini API
+ * Get all available API keys from environment
+ */
+const getApiKeys = () => {
+    const keys = [];
+
+    if (process.env.GEMINI_API_KEY) keys.push(process.env.GEMINI_API_KEY);
+    if (process.env.GEMINI_API_KEY_2) keys.push(process.env.GEMINI_API_KEY_2);
+    if (process.env.GEMINI_API_KEY_3) keys.push(process.env.GEMINI_API_KEY_3);
+
+    return keys;
+};
+
+/**
+ * Check if error is a quota/rate limit error
+ */
+const isQuotaError = (error) => {
+    return error.status === 429 ||
+        error.message?.includes('429') ||
+        error.message?.includes('quota') ||
+        error.message?.includes('limit') ||
+        error.message?.includes('Too Many Requests');
+};
+
+/**
+ * Enhance a user's prompt using Gemini API with multi-key fallback
  * @param {string} originalPrompt - The user's original prompt
  * @returns {Promise<{enhancedPrompt: string, responseTime: number}>}
  */
 export const enhancePrompt = async (originalPrompt) => {
     const startTime = Date.now();
+    const apiKeys = getApiKeys();
 
-    try {
-        // Initialize with latest API key from environment
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    if (apiKeys.length === 0) {
+        throw new Error('No Gemini API keys configured');
+    }
 
-        // Use Gemini 2.5 Flash (latest model as of Feb 2025)
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    console.log(`🔑 ${apiKeys.length} API key(s) available`);
 
-        // Construct the full prompt
-        const fullPrompt = `${SYSTEM_PROMPT}
+    // Construct the full prompt
+    const fullPrompt = `${SYSTEM_PROMPT}
 
 Original prompt to enhance:
 """
@@ -44,30 +68,50 @@ ${originalPrompt}
 
 Enhanced prompt:`;
 
-        // Generate enhanced prompt
-        const result = await model.generateContent(fullPrompt);
-        const response = await result.response;
-        const enhancedPrompt = response.text().trim();
+    let lastError = null;
 
-        const responseTime = Date.now() - startTime;
+    // Try each API key
+    for (let i = 0; i < apiKeys.length; i++) {
+        const apiKey = apiKeys[i];
+        console.log(`🔄 Trying API key ${i + 1}/${apiKeys.length}...`);
 
-        return {
-            enhancedPrompt,
-            responseTime
-        };
+        try {
+            const genAI = new GoogleGenerativeAI(apiKey);
+            const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-    } catch (error) {
-        console.error('Gemini API error:', error);
+            const result = await model.generateContent(fullPrompt);
+            const response = await result.response;
+            const enhancedPrompt = response.text().trim();
 
-        // Handle specific error cases
-        if (error.message?.includes('API_KEY')) {
-            throw new Error('Invalid Gemini API key');
+            const responseTime = Date.now() - startTime;
+            console.log(`✅ Success with key ${i + 1}! Response time: ${responseTime}ms`);
+
+            return { enhancedPrompt, responseTime };
+
+        } catch (error) {
+            console.error(`❌ Key ${i + 1} failed:`, error.message?.substring(0, 100));
+            lastError = error;
+
+            // If quota exceeded, try next key
+            if (isQuotaError(error)) {
+                console.log(`📊 Quota exceeded on key ${i + 1}, trying next...`);
+                continue;
+            }
+
+            // For other errors, also try next key
+            if (error.message?.includes('API_KEY') || error.status === 403) {
+                console.log(`🔒 Invalid key ${i + 1}, trying next...`);
+                continue;
+            }
         }
-
-        if (error.message?.includes('quota') || error.message?.includes('limit')) {
-            throw new Error('API rate limit exceeded. Please try again later.');
-        }
-
-        throw new Error('Failed to enhance prompt. Please try again.');
     }
+
+    // All keys exhausted
+    console.error('❌ All API keys exhausted');
+
+    if (isQuotaError(lastError)) {
+        throw new Error('All API keys have reached their quota. Please try again later.');
+    }
+
+    throw new Error('Failed to enhance prompt. Please try again.');
 };
