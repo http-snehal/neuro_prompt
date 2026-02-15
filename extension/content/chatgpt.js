@@ -1,5 +1,4 @@
-// ChatGPT Content Script - Injects "Optimize Prompt" button
-
+// ChatGPT Content Script - EXACT SAME BEHAVIOR AS GEMINI
 console.log('🚀 Neuroprompt: ChatGPT content script loaded');
 
 // Configuration
@@ -7,7 +6,7 @@ const CONFIG = {
     platform: 'chatgpt',
     buttonId: 'neuroprompt-optimize-btn',
     buttonText: '✨ Optimize Prompt',
-    textareaSelector: '#prompt-textarea', // Main textarea for ChatGPT
+    textareaSelector: '#prompt-textarea, div[contenteditable="true"][data-id="root"], div.ProseMirror[contenteditable="true"]',
     observerConfig: { childList: true, subtree: true }
 };
 
@@ -17,7 +16,7 @@ let currentTextarea = null;
 let isProcessing = false;
 
 /**
- * Create and style the optimize button
+ * Create and style the optimize button - SAME AS GEMINI
  */
 function createOptimizeButton() {
     const button = document.createElement('button');
@@ -25,27 +24,27 @@ function createOptimizeButton() {
     button.textContent = CONFIG.buttonText;
     button.className = 'neuroprompt-btn';
 
-    // Modern glassmorphism style - fixed position in top-right area
+    // Position will be set dynamically relative to input box
     button.style.cssText = `
-    position: fixed;
-    top: 120px;
-    right: 240px;
-    z-index: 9999;
-    background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    letter-spacing: 0.5px;
-  `;
+        position: fixed;
+        z-index: 9999;
+        background: #2872A1;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 16px rgba(40, 114, 161, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        letter-spacing: 0.5px;
+    `;
 
-    // Enhanced hover effect
+    console.log('🔧 Neuroprompt button position:', { top: '-50px', right: '20px' });
+
+    // Enhanced hover effect - pink glow only on hover
     button.addEventListener('mouseenter', () => {
         if (!button.disabled) {
             button.style.transform = 'translateY(-2px) scale(1.02)';
@@ -55,7 +54,7 @@ function createOptimizeButton() {
 
     button.addEventListener('mouseleave', () => {
         button.style.transform = 'translateY(0) scale(1)';
-        button.style.boxShadow = '0 4px 16px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)';
+        button.style.boxShadow = '0 4px 16px rgba(40, 114, 161, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)';
     });
 
     // Click handler
@@ -65,7 +64,7 @@ function createOptimizeButton() {
 }
 
 /**
- * Handle optimize button click
+ * Handle optimize button click - SAME AS GEMINI
  */
 async function handleOptimizeClick(e) {
     e.preventDefault();
@@ -73,7 +72,10 @@ async function handleOptimizeClick(e) {
 
     if (isProcessing || !currentTextarea) return;
 
-    const originalPrompt = currentTextarea.value.trim();
+    // Get text - handle both textarea and contenteditable
+    const originalPrompt = currentTextarea.value !== undefined
+        ? currentTextarea.value.trim()
+        : currentTextarea.innerText.trim();
 
     if (!originalPrompt) {
         showNotification('⚠️ Please enter a prompt first', 'warning');
@@ -95,8 +97,12 @@ async function handleOptimizeClick(e) {
         });
 
         if (response.success) {
-            // Replace textarea content with enhanced prompt
-            currentTextarea.value = response.data.enhancedPrompt;
+            // Replace content with enhanced prompt
+            if (currentTextarea.value !== undefined) {
+                currentTextarea.value = response.data.enhancedPrompt;
+            } else {
+                currentTextarea.innerText = response.data.enhancedPrompt;
+            }
 
             // Trigger input event so ChatGPT recognizes the change
             currentTextarea.dispatchEvent(new Event('input', { bubbles: true }));
@@ -117,7 +123,7 @@ async function handleOptimizeClick(e) {
 }
 
 /**
- * Add or remove blur effect from textarea
+ * Add or remove blur effect from textarea - SAME AS GEMINI
  */
 function addBlurEffect(add) {
     if (!currentTextarea) return;
@@ -133,7 +139,7 @@ function addBlurEffect(add) {
 }
 
 /**
- * Update button state
+ * Update button state - SAME AS GEMINI
  */
 function updateButtonState(state) {
     if (!optimizeButton) return;
@@ -156,7 +162,7 @@ function updateButtonState(state) {
 }
 
 /**
- * Show notification to user
+ * Show notification to user - SAME AS GEMINI
  */
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
@@ -164,19 +170,19 @@ function showNotification(message, type = 'info') {
     notification.className = `neuroprompt-notification neuroprompt-${type}`;
 
     notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    animation: slideIn 0.3s ease-out;
-  `;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideIn 0.3s ease-out;
+    `;
 
     document.body.appendChild(notification);
 
@@ -184,6 +190,25 @@ function showNotification(message, type = 'info') {
         notification.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
+}
+
+/**
+ * Update button position relative to input box
+ */
+function updateButtonPosition() {
+    if (!optimizeButton || !currentTextarea) return;
+
+    const rect = currentTextarea.getBoundingClientRect();
+
+    // Position button above the input box, aligned to the right
+    const top = Math.max(10, rect.top - 65); // Increased gap (55px above input)
+    const right = Math.max(10, window.innerWidth - rect.right - 50); // Slightly more right offset
+
+    optimizeButton.style.top = top + 'px';
+    optimizeButton.style.right = right + 'px';
+    optimizeButton.style.left = 'auto'; // Clear left to use right positioning
+
+    console.log('📍 Button position:', { top, right });
 }
 
 /**
@@ -202,24 +227,18 @@ function injectButton() {
         return;
     }
 
-    // Find the textarea's parent container
-    const container = currentTextarea.closest('form') || currentTextarea.parentElement;
-
-    if (!container) {
-        console.log('Neuroprompt: Container not found');
-        return;
-    }
-
-    // Make container relative for absolute positioning
-    if (getComputedStyle(container).position === 'static') {
-        container.style.position = 'relative';
-    }
-
-    // Create and inject button
+    // Create and inject button to body (fixed positioning)
     optimizeButton = createOptimizeButton();
-    container.appendChild(optimizeButton);
+    document.body.appendChild(optimizeButton);
 
-    console.log('✅ Neuroprompt: Button injected');
+    // Set initial position
+    updateButtonPosition();
+
+    // Update position on resize and scroll
+    window.addEventListener('resize', updateButtonPosition);
+    window.addEventListener('scroll', updateButtonPosition, true);
+
+    console.log('✅ Neuroprompt: Button injected and attached to input');
 }
 
 /**
@@ -234,46 +253,51 @@ function init() {
         if (!document.getElementById(CONFIG.buttonId)) {
             injectButton();
         }
+        // Update position on any DOM changes
+        updateButtonPosition();
     });
 
     observer.observe(document.body, CONFIG.observerConfig);
 
+    // Also update position periodically for smoother tracking
+    setInterval(updateButtonPosition, 100);
+
     console.log('✅ Neuroprompt: Observer started');
 }
 
-// Add animation styles
+// Add animation styles - SAME AS GEMINI
 const style = document.createElement('style');
 style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
     }
-    to {
-      transform: translateX(0);
-      opacity: 1;
+
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
     }
-  }
-  
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
     }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
 `;
 document.head.appendChild(style);
 
@@ -283,3 +307,4 @@ if (document.readyState === 'loading') {
 } else {
     init();
 }
+
